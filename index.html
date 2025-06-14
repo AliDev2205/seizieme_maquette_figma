@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Conclave - L'élection sacrée du Souverain Pontife</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blood-red: #8b0000;
+            --dark-blood: #4a0000;
+            --parchment: #f5f1e6;
+            --dark-void: #0a0a0a;
+            --void: #1a1a1a;
+            --gold: #D4AF37;
+            --vatican-white: #F1F1F1;
+            --vatican-yellow: #FFD700;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-void);
+            color: var(--parchment);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(10, 10, 10, 0.9) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+        
+        .cinzel {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 2px;
+        }
+        
+        .occult-font {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        
+        /* Effets visuels */
+        .fog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(139, 0, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 50%);
+        }
+        
+        .smoke-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(139, 0, 0, 0.15) 50%, transparent 70%);
+            opacity: 0;
+            animation: smokeFlow 12s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes smokeFlow {
+            0%, 100% { opacity: 0; transform: translateX(-100px) rotate(0deg); }
+            50% { opacity: 0.4; transform: translateX(100px) rotate(10deg); }
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(139, 0, 0, 0.7), 0 0 40px rgba(139, 0, 0, 0.5);
+        }
+        
+        .gold-glow {
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.8), 0 0 30px rgba(212, 175, 55, 0.5);
+        }
+        
+        .blood-red {
+            color: var(--blood-red);
+        }
+        
+        .gold-text {
+            color: var(--gold);
+        }
+        
+        .crimson-border {
+            border-color: var(--blood-red);
+        }
+        
+        .hover-glow {
+            transition: all 0.4s ease;
+        }
+        
+        .hover-glow:hover {
+            box-shadow: 0 0 40px rgba(139, 0, 0, 0.6);
+            transform: translateY(-3px);
+        }
+        
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blood-red), transparent);
+            margin: 4rem auto;
+            width: 80%;
+        }
+        
+        .icon-container {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .icon-container::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .reveal-icon {
+            opacity: 0;
+            transform: scale(0.8) rotate(20deg);
+        }
+        
+        .vatican-symbol {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+        
+        .keys-symbol {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50,10 C70,10 86,26 86,46 C86,66 70,82 50,82 C30,82 14,66 14,46 C14,26 30,10 50,10 Z' fill='none' stroke='%23D4AF37' stroke-width='1' opacity='0.3'/%3E%3Cpath d='M50,20 L50,70 M40,30 L60,30 M40,50 L60,50' fill='none' stroke='%23D4AF37' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E");
+        }
+        
+        .dove-symbol {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M30,50 Q50,30 70,50 Q50,70 30,50 Z' fill='none' stroke='%23D4AF37' stroke-width='1' opacity='0.3'/%3E%3Cpath d='M50,40 L50,60 M45,45 L55,45' fill='none' stroke='%23D4AF37' stroke-width='1' opacity='0.3'/%3E%3C/svg%3E");
+        }
+        
+        .floating {
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .candle-flame {
+            position: relative;
+            width: 8px;
+            height: 30px;
+            background: linear-gradient(to bottom, #ff9d00, #ff2a00, #8B0000);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 20px 8px rgba(255, 106, 0, 0.7);
+            animation: flicker 3s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 20px 8px rgba(255, 106, 0, 0.7);
+            }
+            25% { 
+                transform: scale(0.95, 1.05); 
+                box-shadow: 0 0 22px 10px rgba(255, 106, 0, 0.8);
+            }
+            50% { 
+                transform: scale(1.05, 0.95); 
+                box-shadow: 0 0 18px 6px rgba(255, 106, 0, 0.6);
+            }
+            75% { 
+                transform: scale(0.98, 1.02); 
+                box-shadow: 0 0 21px 9px rgba(255, 106, 0, 0.75);
+            }
+        }
+        
+        .smoke-signal {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--vatican-white);
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: smokeRise 4s infinite;
+        }
+        
+        @keyframes smokeRise {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translateY(-100px) scale(3); opacity: 0.8; }
+            90% { opacity: 0.2; }
+            100% { transform: translateY(-200px) scale(5); opacity: 0; }
+        }
+        
+        .sigil-border {
+            position: relative;
+        }
+        
+        .sigil-border::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        
+        .sigil-border::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        
+        .btn-cta {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            background: linear-gradient(45deg, rgba(139, 0, 0, 0.2), rgba(10, 10, 10, 0.8));
+            border: 1px solid var(--gold);
+            color: var(--parchment);
+            padding: 1.5rem 3rem;
+            font-size: 1.25rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            transition: all 0.4s ease;
+        }
+        
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .btn-cta:hover::before {
+            left: 100%;
+        }
+        
+        .btn-cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        }
+        
+        .text-stroke {
+            -webkit-text-stroke: 1px var(--blood-red);
+            color: transparent;
+        }
+        
+        .gold-stroke {
+            -webkit-text-stroke: 1px var(--gold);
+            color: transparent;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            width: calc(50% - 40px);
+        }
+        
+        .timeline-item:nth-child(odd) {
+            float: left;
+            clear: both;
+        }
+        
+        .timeline-item:nth-child(even) {
+            float: right;
+            clear: both;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            background: rgba(10, 10, 10, 0.7);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .timeline-content::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content::after {
+            right: -50px;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content::after {
+            left: -50px;
+        }
+        
+        @media (max-width: 767px) {
+            .vatican-symbol {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .icon-container {
+                width: 80px;
+                height: 80px;
+            }
+            
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                width: calc(100% - 60px);
+                padding-left: 50px;
+                float: none !important;
+                clear: both;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-content::after,
+            .timeline-item:nth-child(even) .timeline-content::after {
+                left: -30px;
+                top: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+    .timeline-item {
+        width: calc(100% - 40px);
+        padding-left: 30px;
+        margin-left: 20px;
+    }
+    
+    .timeline::before {
+        left: 10px;
+    }
+    
+    .timeline-item:nth-child(odd) .timeline-content::after,
+    .timeline-item:nth-child(even) .timeline-content::after {
+        left: -20px;
+        width: 15px;
+        height: 15px;
+    }
+    
+    .timeline-content {
+        padding: 15px;
+        font-size: 14px;
+    }
+    
+    .timeline-content h3 {
+        font-size: 16px;
+    }
+}
+        
+         /* SOLUTION AU PROBLÈME DE DISPOSITION */
+        .timeline-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 50px; /* Espace supplémentaire en bas */
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            width: calc(50% - 40px);
+        }
+        
+        .timeline-item:nth-child(odd) {
+            float: left;
+            clear: both;
+        }
+        
+        .timeline-item:nth-child(even) {
+            float: right;
+            clear: both;
+        }
+        
+        /* Correction pour le clear des flottants */
+        .timeline::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        /* Ajout d'un espace après la timeline */
+        #timeline {
+            overflow: hidden;
+            padding-bottom: 50px;
+        }
+        
+        /* Autres améliorations mineures */
+        .timeline-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .section-divider {
+            margin: 2rem auto 4rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Fog Overlay -->
+    <div class="fog-overlay">
+        <div class="smoke-effect"></div>
+    </div>
+    
+    <!-- Vatican Symbols -->
+    <div class="vatican-symbol keys-symbol floating" style="top: 15%; left: 5%;"></div>
+    <div class="vatican-symbol dove-symbol floating" style="top: 25%; right: 7%; animation-delay: -2s;"></div>
+    <div class="vatican-symbol keys-symbol floating" style="bottom: 20%; left: 10%; animation-delay: -4s;"></div>
+    <div class="vatican-symbol dove-symbol floating" style="bottom: 30%; right: 15%; animation-delay: -6s;"></div>
+    
+    <!-- Smoke signals -->
+    <div id="smoke-signals-container"></div>
+    
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16" id="hero">
+        <div class="absolute inset-0 bg-cover bg-center bg-fixed" 
+         style="background-image: url('img/CONCLAVE.webp') ">
+    </div>
+        <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-0"></div>
+        
+        
+        
+        <div class="relative z-10 text-center px-4 max-w-6xl mx-auto">
+            <h1 class="cinzel text-6xl md:text-8xl lg:text-9xl font-black mb-6 gold-glow opacity-0 gold-stroke" id="main-title">
+                LE CONCLAVE
+            </h1>
+            <p class="text-2xl md:text-3xl mb-8 text-gray-300 opacity-0 cinzel" id="subtitle">
+                Là où s'élit le <span class="gold-text">Souverain Pontife</span>
+            </p>
+            <button class="btn-cta occult-font opacity-0" id="cta-hero">
+                DÉCOUVRIR LE PROCESSUS SACRÉ
+            </button>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <span class="text-sm text-gray-400 mb-2">SCROLL</span>
+            <div class="w-px h-16 bg-gradient-to-b from-red-800 to-transparent"></div>
+        </div>
+    </section>
+    
+    <!-- Presentation Section -->
+    <section class="relative py-32 px-4" id="presentation">
+        <div class="max-w-6xl mx-auto">
+            <div class="section-divider"></div>
+            
+            <div class="text-center mb-20">
+                <h2 class="cinzel text-4xl md:text-5xl font-bold mb-12 reveal-text gold-text">
+                    LE PROCESSUS SACRÉ
+                </h2>
+                <p class="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed reveal-text">
+                    Le Conclave est l'assemblée des cardinaux de l'Église catholique chargée d'élire 
+                    le <span class="gold-text">Souverain Pontife</span>. Cette cérémonie millénaire se déroule dans le 
+                    <span class="gold-text">secret absolu</span> de la Chapelle Sixtine au Vatican.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-16 mt-20">
+                <div class="text-center reveal-icon">
+                    <div class="icon-container mx-auto mb-8">
+                        <svg class="w-10 h-10 gold-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3a9 9 0 0 0-9 9c0 2.17.74 4.16 1.97 5.76L3 21l3.24-1.97A8.96 8.96 0 0 0 12 21a9 9 0 0 0 0-18z"/>
+                        </svg>
+                    </div>
+                    <h3 class="cinzel text-2xl font-bold mb-4">ISOLEMENT TOTAL</h3>
+                    <p class="text-gray-400">Les cardinaux sont enfermés dans la Chapelle Sixtine sans contact extérieur</p>
+                </div>
+                
+                <div class="text-center reveal-icon">
+                    <div class="icon-container mx-auto mb-8">
+                        <svg class="w-10 h-10 gold-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="cinzel text-2xl font-bold mb-4">SECRET ABSOLU</h3>
+                    <p class="text-gray-400">Les délibérations sont couvertes par le secret sous peine d'excommunication</p>
+                </div>
+                
+                <div class="text-center reveal-icon">
+                    <div class="icon-container mx-auto mb-8">
+                        <svg class="w-10 h-10 gold-text" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3a9 9 0 0 0-9 9c0 2.17.74 4.16 1.97 5.76L3 21l3.24-1.97A8.96 8.96 0 0 0 12 21a9 9 0 0 0 0-18z"/>
+                        </svg>
+                    </div>
+                    <h3 class="cinzel text-2xl font-bold mb-4">ÉLECTION DIVINE</h3>
+                    <p class="text-gray-400">Le nouveau pape doit obtenir au moins deux tiers des voix des cardinaux</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Histoire Section -->
+    <section class="relative py-32 px-4 bg-gradient-to-b from-black via-var(--void) to-black" id="histoire">
+        <div class="max-w-4xl mx-auto text-center relative">
+            <div class="section-divider"></div>
+            
+            <h2 class="cinzel text-4xl md:text-5xl font-bold mb-16 reveal-text gold-text">
+                ORIGINES HISTORIQUES
+            </h2>
+            
+            <div class="space-y-10 text-xl md:text-2xl text-gray-300 leading-relaxed sigil-border py-10">
+                <p class="reveal-text">
+                    Le terme "conclave" vient du latin <span class="gold-text">"cum clave"</span> (sous clé), rappelant la pratique instaurée en 1274 
+                    par le pape Grégoire X après une élection qui avait duré <span class="gold-text">près de trois ans</span>.
+                </p>
+                <p class="reveal-text">
+                    Depuis le XIIIe siècle, cette procédure d'élection s'est affinée pour devenir 
+                    le <span class="gold-text">processus sacré</span> que nous connaissons aujourd'hui, mélange de tradition 
+                    et de spiritualité.
+                </p>
+                <p class="reveal-text">
+                    Le conclave moderne se déroule dans la <span class="gold-text">Chapelle Sixtine</span>, sous les fresques de Michel-Ange, 
+                    où les cardinaux invoquent la guidance du <span class="gold-text">Saint-Esprit</span> pour leur choix.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Timeline Section -->
+    <section class="relative py-20 px-2" id="timeline">
+        <div class="max-w-6xl mx-auto">
+            <div class="section-divider"></div>
+            
+            <h2 class="cinzel text-4xl md:text-5xl font-bold mb-20 text-center reveal-text gold-text">
+                DÉROULEMENT DU CONCLAVE
+            </h2>
+            
+            <div class="timeline-container">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content reveal-text">
+                            <h3 class="cinzel text-xl font-bold mb-2 gold-text">SEDE VACANTE</h3>
+                            <p>Période de vacance du siège apostolique après la mort ou la renonciation du pape</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content reveal-text">
+                            <h3 class="cinzel text-xl font-bold mb-2 gold-text">ENTRÉE EN CONCLAVE</h3>
+                            <p>Les cardinaux électeurs (moins de 80 ans) entrent dans la Chapelle Sixtine et sont enfermés à clé</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content reveal-text">
+                            <h3 class="cinzel text-xl font-bold mb-2 gold-text">SERMENT DE SECRET</h3>
+                            <p>Chaque cardinal prête serment de garder le secret absolu sur les délibérations</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content reveal-text">
+                            <h3 class="cinzel text-xl font-bold mb-2 gold-text">LES SCRUTINS</h3>
+                            <p>Quatre scrutins par jour jusqu'à l'élection d'un pape (2/3 des voix requises)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content reveal-text">
+                            <h3 class="cinzel text-xl font-bold mb-2 gold-text">LA FUMÉE</h3>
+                            <p>Après chaque scrutin, les bulletins sont brûlés : fumée noire (pas d'élu), blanche (nouveau pape)</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-content reveal-text">
+                            <h3 class="cinzel text-xl font-bold mb-2 gold-text">HABEMUS PAPAM</h3>
+                            <p>Le cardinal protodiacre annonce "Habemus Papam!" du balcon de la basilique Saint-Pierre</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="relative py-32 px-4" id="cta">
+        <div class="max-w-4xl mx-auto text-center relative">
+            <div class="section-divider"></div>
+            
+            <h2 class="cinzel text-4xl md:text-5xl font-bold mb-10 reveal-text gold-text">
+                EXPLOREZ LES MYSTÈRES DU VATICAN
+            </h2>
+            <p class="text-2xl md:text-3xl text-gray-300 mb-16 reveal-text">
+                Découvrez les <span class="gold-text">secrets</span> de cette institution millénaire et 
+                l'histoire des <span class="gold-text">266 papes</span> qui ont dirigé l'Église catholique.
+            </p>
+            
+            <div class="reveal-text">
+                <button class="btn-cta occult-font">
+                    DÉCOUVRIR L'HISTOIRE
+                </button>
+                <p class="text-sm text-gray-500 mt-6">
+                    * Sources historiques et archives vaticanes
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="relative py-16 px-4 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-8 md:mb-0">
+                    <p class="cinzel text-3xl font-bold gold-text mb-4">LE CONCLAVE</p>
+                    <p class="text-gray-500 text-sm max-w-xs">
+                        Cérémonie sacrée de l'Église catholique depuis le XIIIe siècle
+                    </p>
+                </div>
+                
+                <div class="flex space-x-6">
+                    <a href="#" class="w-12 h-12 border border-red-800 rounded-full flex items-center justify-center hover-glow">
+                        <i class="fas fa-book gold-text"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 border border-red-800 rounded-full flex items-center justify-center hover-glow">
+                        <i class="fas fa-church gold-text"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 border border-red-800 rounded-full flex items-center justify-center hover-glow">
+                        <i class="fas fa-history gold-text"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 border border-red-800 rounded-full flex items-center justify-center hover-glow">
+                        <i class="fas fa-cross gold-text"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-6 text-center">
+                <p class="text-gray-600 text-sm">
+                    © 2025 LE CONCLAVE - Site éducatif sur l'histoire de l'Église catholique
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Register ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Hero animations
+        const tl = gsap.timeline();
+        
+        tl.to("#main-title", {
+            opacity: 1,
+            duration: 2.5,
+            ease: "power4.out",
+            y: 0,
+            stagger: 0.1
+        })
+        .to("#subtitle", {
+            opacity: 1,
+            duration: 1.8,
+            ease: "power3.out",
+            delay: 0.5
+        }, "-=1.5")
+        .to("#cta-hero", {
+            opacity: 1,
+            duration: 1.5,
+            ease: "power3.out",
+            scale: 1,
+            delay: 0.3
+        }, "-=1");
+        
+        // Create smoke signals
+        function createSmokeSignals() {
+            const container = document.getElementById('smoke-signals-container');
+            const signalCount = 8;
+            
+            for (let i = 0; i < signalCount; i++) {
+                const signal = document.createElement('div');
+                signal.classList.add('smoke-signal');
+                
+                // Random position
+                const leftPos = 20 + Math.random() * 60;
+                signal.style.left = `${leftPos}vw`;
+                signal.style.bottom = `-50px`;
+                
+                // Random delay and duration
+                const delay = Math.random() * 5;
+                const duration = 4 + Math.random() * 4;
+                signal.style.animationDelay = `${delay}s`;
+                signal.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(signal);
+            }
+        }
+        
+        createSmokeSignals();
+        
+        // Smoke effect
+        gsap.to(".smoke-effect", {
+            opacity: 0.5,
+            duration: 6,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+        
+        // Reveal text animations on scroll
+        gsap.utils.toArray(".reveal-text").forEach((text, i) => {
+            gsap.fromTo(text, {
+                opacity: 0,
+                y: 50
+            }, {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: text,
+                    start: "top 90%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                },
+                delay: i * 0.1
+            });
+        });
+        
+        // Reveal icons animations on scroll
+        gsap.utils.toArray(".reveal-icon").forEach((icon, i) => {
+            gsap.fromTo(icon, {
+                opacity: 0,
+                scale: 0.8,
+                rotation: 20
+            }, {
+                opacity: 1,
+                scale: 1,
+                rotation: 0,
+                duration: 1.2,
+                ease: "elastic.out(1, 0.5)",
+                scrollTrigger: {
+                    trigger: icon,
+                    start: "top 85%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                },
+                delay: i * 0.2
+            });
+        });
+        
+        // Icon hover animations
+        gsap.utils.toArray(".icon-container").forEach(icon => {
+            icon.addEventListener("mouseenter", () => {
+                gsap.to(icon, {
+                    scale: 1.15,
+                    duration: 0.6,
+                    ease: "power2.out"
+                });
+            });
+            
+            icon.addEventListener("mouseleave", () => {
+                gsap.to(icon, {
+                    scale: 1,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            });
+        });
+        
+        // Button hover effects
+        document.querySelectorAll("button").forEach(btn => {
+            btn.addEventListener("mouseenter", () => {
+                gsap.to(btn, {
+                    scale: 1.08,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            });
+            
+            btn.addEventListener("mouseleave", () => {
+                gsap.to(btn, {
+                    scale: 1,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            });
+        });
+        
+        // Section dividers animation
+        gsap.utils.toArray(".section-divider").forEach(divider => {
+            gsap.fromTo(divider, {
+                scaleX: 0
+            }, {
+                scaleX: 1,
+                duration: 2,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: divider,
+                    start: "top 90%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+        });
+        
+        // Floating symbols animation
+        gsap.utils.toArray(".vatican-symbol").forEach(symbol => {
+            gsap.to(symbol, {
+                rotation: 360,
+                duration: 120,
+                repeat: -1,
+                ease: "none"
+            });
+        });
+        
+        // Candle flames animation
+        gsap.utils.toArray(".candle-flame").forEach(flame => {
+            gsap.to(flame, {
+                scale: 1.2,
+                duration: 1.5,
+                yoyo: true,
+                repeat: -1,
+                ease: "power1.inOut"
+            });
+        });
+
+        // Ajout d'un délai supplémentaire pour les animations de la timeline
+        gsap.utils.toArray(".timeline .reveal-text").forEach((text, i) => {
+            gsap.fromTo(text, {
+                opacity: 0,
+                y: 50
+            }, {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: text,
+                    start: "top 90%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                },
+                delay: i * 0.2  // Délai augmenté pour un meilleur effet
+            });
+        });
+    </script>
+</body>
+</html>
